@@ -71,7 +71,7 @@ if runner == "kimi" and args == ["session", "list", "--all", "--json"]:
         print("[]")
     raise SystemExit(0)
 
-stdin_text = sys.stdin.read() if sys.stdin else ""
+stdin_text = sys.stdin.buffer.read().decode("utf-8") if sys.stdin else ""  # the skill sends UTF-8; never trust the console code page
 record = os.environ.get("FAKE_RECORD")
 if record:
     with open(record, "w", encoding="utf-8") as handle:
