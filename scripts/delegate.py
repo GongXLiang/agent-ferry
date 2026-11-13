@@ -14,6 +14,8 @@ if sys.version_info < (3, 10):
     )
     sys.exit(1)
 
+sys.dont_write_bytecode = True  # keep the skill folder free of __pycache__
+
 from pathlib import Path  # noqa: E402
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))

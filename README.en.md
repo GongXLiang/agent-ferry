@@ -2,6 +2,8 @@
 
 [简体中文](README.md) · [English](README.en.md)
 
+[![Offline checks](https://github.com/GongXLiang/agent-delegate-verify/actions/workflows/checks.yml/badge.svg)](https://github.com/GongXLiang/agent-delegate-verify/actions/workflows/checks.yml)
+
 Lets Claude Code (or another host such as Codex) hand **one well-bounded task** to a different CLI coding agent, get back the result, an audit summary and a resume command, and then verify it before reporting. Read-only and an isolated workspace by default, and it always tells you where its files are.
 
 > This project is adapted from [oil-oil/oil-delegate](https://github.com/oil-oil/oil-delegate) (MIT). It keeps the upstream adapters for nine runners, structured output, session resume, roles and session export. Changes are summarized below and in [docs/DESIGN.md](docs/DESIGN.md) (Chinese); attribution is in [NOTICE.md](NOTICE.md).

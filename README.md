@@ -2,6 +2,8 @@
 
 [简体中文](README.md) · [English](README.en.md)
 
+[![Offline checks](https://github.com/GongXLiang/agent-delegate-verify/actions/workflows/checks.yml/badge.svg)](https://github.com/GongXLiang/agent-delegate-verify/actions/workflows/checks.yml)
+
 让 Claude Code（或 Codex 等宿主）把**一项边界清楚的任务**交给另一个 CLI Agent，拿回结果、审计摘要和续接命令，再由你核实后转述。默认只读、默认隔离工作区，文件放在哪里会明确告诉你。
 
 > 本项目基于 [oil-oil/oil-delegate](https://github.com/oil-oil/oil-delegate)（MIT）改造，保留了上游的 9 个 runner 适配、结构化输出、续接、角色和会话导出等能力。相对上游的改动见下文与 [docs/DESIGN.md](docs/DESIGN.md)，来源说明见 [NOTICE.md](NOTICE.md)。
