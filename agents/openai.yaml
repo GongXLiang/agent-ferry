@@ -1,0 +1,7 @@
+interface:
+  display_name: "agent-delegate-verify（委托与验收）"
+  short_description: "把单次任务交给 Codex、Claude Code 等 CLI Agent：默认只读与隔离工作区，告知文件位置，附审计摘要与核实清单"
+  default_prompt: "请使用 $agent-delegate-verify，把这项任务交给我指定的 CLI Agent（默认只读）；告诉我文件放在哪里，核实结果后再汇报。"
+
+policy:
+  allow_implicit_invocation: true
