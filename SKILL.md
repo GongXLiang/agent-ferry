@@ -1,15 +1,15 @@
 ---
-name: agent-delegate-verify
-description: "把一项边界清楚的任务从 Claude Code 等宿主委托给另一个 CLI Agent（Codex、Claude Code、OpenCode、DeepSeek Harness、Kimi Code、Pi、Grok Build、WorkBuddy、Antigravity），默认只读沙箱与隔离工作区，自动找 Python/conda，告诉用户文件放在哪，返回审计摘要与续接命令，结果须由调用方核实后再转述。Use when the user asks to delegate or hand off a task to Codex, Claude Code or another CLI coding agent, get a second opinion, review, research or implementation from it, continue that agent's session, audit what it did, or check and clean this skill's files. 不用于普通直接问答、多话题编排或常驻监控。"
+name: agent-ferry
+description: "在不同 Agent 之间派发任务并取回结果：宿主（Claude Code、Codex 等）把一项边界清楚的任务交给另一个 CLI Agent（Codex、Claude Code、OpenCode、DeepSeek Harness、Kimi Code、Pi、Grok Build、WorkBuddy、Antigravity），默认只读沙箱与隔离工作区，自动找 Python/conda，告诉用户文件放在哪，返回审计摘要与续接命令，结果须由调用方核实后再转述。Use when the user asks to delegate, dispatch or hand off a task to Codex, Claude Code or another CLI coding agent, get a second opinion, review, research or implementation from it, continue that agent's session, audit what it did, or check and clean this skill's files. 不用于普通直接问答、多话题编排或常驻监控。"
 license: MIT
 metadata:
   version: "1.0.0"
   upstream: "oil-oil/oil-delegate (MIT)"
 ---
 
-# agent-delegate-verify
+# agent-ferry
 
-把单次任务交给另一个 CLI Agent，拿回结果，再由你（调用方）核实后转述。基于 oil-oil/oil-delegate（MIT）改造。
+在不同 Agent 之间摆渡单次任务：交给另一个 CLI Agent，拿回结果，再由你（调用方）核实后转述。宿主可以是 Claude Code，也可以是 Codex。基于 oil-oil/oil-delegate（MIT）改造。
 
 ## 运行脚本
 
@@ -21,7 +21,7 @@ metadata:
 | cmd | `"%SKILL_DIR%\scripts\delegate.cmd"` |
 | bash / zsh / Git Bash | `sh "$SKILL_DIR/scripts/delegate.sh"` |
 
-引导脚本依次尝试 `AGENT_DELEGATE_VERIFY_PYTHON` → `config --set-python` 固定的解释器 → PATH → conda/uv/pyenv/Scoop → 常见目录与注册表，只接受实际运行通过的 Python 3.10+。找不到或结果可疑时运行 `DELEGATE --which` 或 `DELEGATE doctor`。项目或用户已指定解释器（如某个 conda 环境）时，以它为准，直接用它运行 `scripts/delegate.py`；脚本本身只需任意 3.10+ 和标准库。
+引导脚本依次尝试 `AGENT_FERRY_PYTHON` → `config --set-python` 固定的解释器 → PATH → conda/uv/pyenv/Scoop → 常见目录与注册表，只接受实际运行通过的 Python 3.10+。找不到或结果可疑时运行 `DELEGATE --which` 或 `DELEGATE doctor`。项目或用户已指定解释器（如某个 conda 环境）时，以它为准，直接用它运行 `scripts/delegate.py`；脚本本身只需任意 3.10+ 和标准库。
 
 ## 核心规则
 

@@ -1,4 +1,4 @@
-"""Command line interface for agent-delegate-verify."""
+"""Command line interface for agent-ferry."""
 from __future__ import annotations
 
 import argparse

@@ -1,10 +1,10 @@
-# agent-delegate-verify
+# agent-ferry
 
 [简体中文](README.md) · [English](README.en.md)
 
-[![Offline checks](https://github.com/GongXLiang/agent-delegate-verify/actions/workflows/checks.yml/badge.svg)](https://github.com/GongXLiang/agent-delegate-verify/actions/workflows/checks.yml)
+[![Offline checks](https://github.com/GongXLiang/agent-ferry/actions/workflows/checks.yml/badge.svg)](https://github.com/GongXLiang/agent-ferry/actions/workflows/checks.yml)
 
-Lets Claude Code (or another host such as Codex) hand **one well-bounded task** to a different CLI coding agent, get back the result, an audit summary and a resume command, and then verify it before reporting. Read-only and an isolated workspace by default, and it always tells you where its files are.
+Ferry tasks between agents: a host such as Claude Code or Codex hands **one well-bounded task** to a different CLI coding agent and brings back the result, an audit summary and a resume command, to be checked before it is relayed. Read-only and an isolated workspace by default, and it always tells you where its files are.
 
 > This project is adapted from [oil-oil/oil-delegate](https://github.com/oil-oil/oil-delegate) (MIT). It keeps the upstream adapters for nine runners, structured output, session resume, roles and session export. Changes are summarized below and in [docs/DESIGN.md](docs/DESIGN.md) (Chinese); attribution is in [NOTICE.md](NOTICE.md).
 
@@ -20,7 +20,7 @@ Lets Claude Code (or another host such as Codex) hand **one well-bounded task** 
 
 ## Main changes from upstream
 
-| Area | oil-delegate (upstream) | agent-delegate-verify |
+| Area | oil-delegate (upstream) | agent-ferry |
 | --- | --- | --- |
 | Finding Python | docs say `py -3`/`python3`; no detection | bootstrap scripts + `doctor`; conda/uv/pyenv/Scoop/registry; pin or override |
 | File locations | everything in `~/.oil-delegate`, not reported | config / records / cache / isolated workspaces, host-aware, confirmed on first use, reported every run, `locations`/`prune` |
@@ -49,13 +49,13 @@ Lets Claude Code (or another host such as Codex) hand **one well-bounded task** 
 
 ## Install
 
-Put the repository where your host discovers skills, keeping the folder name `agent-delegate-verify`:
+Put the repository where your host discovers skills, keeping the folder name `agent-ferry`:
 
 ```bash
 # Claude Code
-git clone https://github.com/GongXLiang/agent-delegate-verify.git ~/.claude/skills/agent-delegate-verify
+git clone https://github.com/GongXLiang/agent-ferry.git ~/.claude/skills/agent-ferry
 # Codex
-git clone https://github.com/GongXLiang/agent-delegate-verify.git ~/.codex/skills/agent-delegate-verify
+git clone https://github.com/GongXLiang/agent-ferry.git ~/.codex/skills/agent-ferry
 ```
 
 You need at least one supported CLI that is installed and logged in, and any Python 3.10+ (the bootstrap finds it).
@@ -83,7 +83,7 @@ Where are this skill's files and how much space do they use? List what can be cl
 
 | Location | Contents | Default (configurable) |
 | --- | --- | --- |
-| home | `config.json` (a few KB) | `agent-delegate-verify` in the platform data folder |
+| home | `config.json` (a few KB) | `agent-ferry` in the platform data folder |
 | records | per run: the task, the final reply, `result.json` with the audit summary | chosen on first use |
 | cache | raw output while a run is in flight; deleted when it ends | follows `CLAUDE_CODE_TMPDIR`, else the platform cache folder |
 | workspaces | isolated empty folders for non-project tasks | follows Codex's `projectlessWorkspaceRoot`, named `<date>/<name>` |

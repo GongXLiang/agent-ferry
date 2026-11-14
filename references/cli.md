@@ -6,7 +6,7 @@
 
 | 参数 | 作用 |
 | --- | --- |
-| `--home DIR` | `config.json` 所在目录（也可用环境变量 `AGENT_DELEGATE_VERIFY_HOME`） |
+| `--home DIR` | `config.json` 所在目录（也可用环境变量 `AGENT_FERRY_HOME`） |
 | `--records-dir DIR` | 本次调用的运行记录目录 |
 | `--cache-dir DIR` | 本次调用的在途缓存目录 |
 | `--workspace-root DIR` | 本次调用的隔离工作区根目录 |
@@ -70,7 +70,7 @@
 | --- | --- |
 | 0 | 成功 |
 | 1 | 参数、配置或运行错误（`--json` 时输出 `status: ERROR`） |
-| 9 | 引导脚本找不到可用的 Python 3.10+，或 `AGENT_DELEGATE_VERIFY_PYTHON` 不可用 |
+| 9 | 引导脚本找不到可用的 Python 3.10+，或 `AGENT_FERRY_PYTHON` 不可用 |
 | 10 | `NEEDS_ONBOARDING`：需要确认位置和/或启用 runner |
 | 11 | `NEEDS_RUNNER_CHOICE`：没有默认 runner |
 | 12 | `NEEDS_ROLE_CHOICE`：该角色还没选过 Agent |

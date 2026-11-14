@@ -360,7 +360,7 @@ class BootstrapTests(CliTestCase):
         env = self.bootstrap_env([empty], **{P + "PYTHON": sys.executable})
         proc = self.run_bootstrap(["--version"], env)
         self.assertEqual(proc.returncode, 0, msg=proc.stdout + proc.stderr)
-        self.assertIn("agent-delegate-verify", proc.stdout)
+        self.assertIn("agent-ferry", proc.stdout)
         exit_code = self.run_bootstrap(["show", "no-such-run"], env)
         self.assertEqual(exit_code.returncode, 1, msg=exit_code.stdout + exit_code.stderr)
 

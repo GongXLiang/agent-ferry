@@ -1,6 +1,6 @@
-# agent-delegate-verify bootstrap for Windows PowerShell 5.1+ and PowerShell 7.
+# agent-ferry bootstrap for Windows PowerShell 5.1+ and PowerShell 7.
 # Finds Python 3.10+ without needing Python, then runs scripts/delegate.py with every argument.
-# Order: AGENT_DELEGATE_VERIFY_PYTHON (must work) -> python pinned in config.json -> PATH
+# Order: AGENT_FERRY_PYTHON (must work) -> python pinned in config.json -> PATH
 #        (python, python3, py -3) -> conda/mamba, uv, pyenv-win, Scoop -> common folders
 #        -> registry (PEP 514). Each candidate is executed once; the Microsoft Store
 #        placeholder and anything older than 3.10 are rejected.
@@ -59,17 +59,17 @@ function Get-Apps([string]$Name) {
 }
 
 function Find-Python {
-    $override = $env:AGENT_DELEGATE_VERIFY_PYTHON
+    $override = $env:AGENT_FERRY_PYTHON
     if ($override) {
-        $found = Test-Python -Exe $override -Source 'AGENT_DELEGATE_VERIFY_PYTHON'
+        $found = Test-Python -Exe $override -Source 'AGENT_FERRY_PYTHON'
         if ($found) { return $found }
-        [Console]::Error.WriteLine("[agent-delegate-verify] AGENT_DELEGATE_VERIFY_PYTHON is set but not usable: $override")
+        [Console]::Error.WriteLine("[agent-ferry] AGENT_FERRY_PYTHON is set but not usable: $override")
         foreach ($line in $Rejected) { [Console]::Error.WriteLine("  $line") }
         exit 9
     }
 
-    $homeDir = $env:AGENT_DELEGATE_VERIFY_HOME
-    if (-not $homeDir -and $env:LOCALAPPDATA) { $homeDir = Join-Path $env:LOCALAPPDATA 'agent-delegate-verify' }
+    $homeDir = $env:AGENT_FERRY_HOME
+    if (-not $homeDir -and $env:LOCALAPPDATA) { $homeDir = Join-Path $env:LOCALAPPDATA 'agent-ferry' }
     if ($homeDir) {
         $configFile = Join-Path $homeDir 'config.json'
         if (Test-Path -LiteralPath $configFile -PathType Leaf) {
@@ -78,7 +78,7 @@ function Find-Python {
             if ($pinned) {
                 $found = Test-Python -Exe $pinned -Source 'config.json (pinned)'
                 if ($found) { return $found }
-                [Console]::Error.WriteLine("[agent-delegate-verify] pinned Python is not usable: $pinned; searching instead (update it with: config --set-python)")
+                [Console]::Error.WriteLine("[agent-ferry] pinned Python is not usable: $pinned; searching instead (update it with: config --set-python)")
             }
         }
     }
@@ -191,9 +191,9 @@ $forward = @($args)
 $which = ($forward.Count -gt 0 -and $forward[0] -eq '--which')
 $found = Find-Python
 if (-not $found) {
-    [Console]::Error.WriteLine('[agent-delegate-verify] No Python 3.10+ found. Rejected candidates:')
+    [Console]::Error.WriteLine('[agent-ferry] No Python 3.10+ found. Rejected candidates:')
     foreach ($line in $Rejected) { [Console]::Error.WriteLine("  $line") }
-    [Console]::Error.WriteLine('Install Python 3.10+ (python.org, conda, uv, Scoop ...) or set AGENT_DELEGATE_VERIFY_PYTHON to its full path.')
+    [Console]::Error.WriteLine('Install Python 3.10+ (python.org, conda, uv, Scoop ...) or set AGENT_FERRY_PYTHON to its full path.')
     exit 9
 }
 if ($which) {
@@ -204,7 +204,7 @@ if ($which) {
     foreach ($line in $Rejected) { Write-Output "rejected=$line" }
     exit 0
 }
-$env:AGENT_DELEGATE_VERIFY_PYTHON_SOURCE = $found.Source
+$env:AGENT_FERRY_PYTHON_SOURCE = $found.Source
 $extra = @($found.Extra)
 if ($MyInvocation.ExpectingInput) {
     $OutputEncoding = New-Object System.Text.UTF8Encoding $false

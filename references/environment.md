@@ -8,9 +8,9 @@
 | `scripts/delegate.sh` | Linux、macOS、Git Bash/MSYS | POSIX sh；Windows 风格路径用 `cygpath` 转换 |
 | `scripts/delegate.cmd` | cmd.exe | 用 `-ExecutionPolicy RemoteSigned` 调用 `delegate.ps1`（优先 `pwsh`） |
 
-它们按下面的顺序取第一个可用的解释器，然后把全部参数转给 `scripts/delegate.py`，并设置 `AGENT_DELEGATE_VERIFY_PYTHON_SOURCE` 说明来源（`doctor` 会显示）。
+它们按下面的顺序取第一个可用的解释器，然后把全部参数转给 `scripts/delegate.py`，并设置 `AGENT_FERRY_PYTHON_SOURCE` 说明来源（`doctor` 会显示）。
 
-1. `AGENT_DELEGATE_VERIFY_PYTHON`：显式覆盖。不可用时报错退出（退出码 9），不悄悄换成别的。
+1. `AGENT_FERRY_PYTHON`：显式覆盖。不可用时报错退出（退出码 9），不悄悄换成别的。
 2. `config --set-python` 固定的路径（读 `home/config.json` 的 `python`）：不可用时警告并继续。
 3. PATH：Windows 依次所有 `python`、所有 `python3`、`py -3`；POSIX 依次 `python3`、`python`、`py -3`。
 4. 环境与版本管理器：`CONDA_PREFIX`（已激活环境）；由 `CONDA_EXE`、`MAMBA_EXE`、`MAMBA_ROOT_PREFIX`、`conda info --base` 推出的 base 及其 `envs/*`；`uv python find`（设置 `UV_PYTHON_DOWNLOADS=never`，只找不下载）；pyenv / pyenv-win、asdf、mise；Windows 的 Scoop（`SCOOP`、`~/scoop`、`SCOOP_GLOBAL`、`%ProgramData%\scoop` 下的 `python*`、`miniconda3`、`anaconda3`、`miniforge`、`mambaforge`）。
@@ -21,7 +21,7 @@
 
 ## 固定与覆盖
 
-- 一次性：`AGENT_DELEGATE_VERIFY_PYTHON=<路径>`。
+- 一次性：`AGENT_FERRY_PYTHON=<路径>`。
 - 长期：`DELEGATE config --set-python <路径>`（或 `current` 固定当前解释器，`clear` 取消）。写入前同样执行校验。
 - 项目或用户已指定解释器时，直接用它运行 `scripts/delegate.py`，不经过引导脚本也可以。
 

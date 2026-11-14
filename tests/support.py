@@ -27,7 +27,7 @@ SCRIPT_PATH = SCRIPTS / "delegate.py"
 if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
 
-from adv import audit, cli, common, config, pyfind, runners, sessions, storage, toml_compat  # noqa: E402,F401
+from agent_ferry import audit, cli, common, config, pyfind, runners, sessions, storage, toml_compat  # noqa: E402,F401
 
 RUNNERS = runners.SUPPORTED_RUNNERS
 P = common.ENV_PREFIX
@@ -202,7 +202,7 @@ class CliTestCase(unittest.TestCase):
     maxDiff = None
 
     def setUp(self) -> None:
-        self.tmp = tempfile.TemporaryDirectory(prefix="adv-test-")
+        self.tmp = tempfile.TemporaryDirectory(prefix="ferry-test-")
         self.addCleanup(self.tmp.cleanup)  # registered first, so it runs after every other cleanup
         self.root = Path(self.tmp.name).resolve()
         self.home = self.root / "home"

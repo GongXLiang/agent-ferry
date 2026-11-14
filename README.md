@@ -1,10 +1,10 @@
-# agent-delegate-verify
+# agent-ferry
 
 [简体中文](README.md) · [English](README.en.md)
 
-[![Offline checks](https://github.com/GongXLiang/agent-delegate-verify/actions/workflows/checks.yml/badge.svg)](https://github.com/GongXLiang/agent-delegate-verify/actions/workflows/checks.yml)
+[![Offline checks](https://github.com/GongXLiang/agent-ferry/actions/workflows/checks.yml/badge.svg)](https://github.com/GongXLiang/agent-ferry/actions/workflows/checks.yml)
 
-让 Claude Code（或 Codex 等宿主）把**一项边界清楚的任务**交给另一个 CLI Agent，拿回结果、审计摘要和续接命令，再由你核实后转述。默认只读、默认隔离工作区，文件放在哪里会明确告诉你。
+在不同 Agent 之间摆渡任务：让 Claude Code、Codex 等宿主把**一项边界清楚的任务**派给另一个 CLI Agent，带回结果、审计摘要和续接命令，由你核实后再转述。默认只读、默认隔离工作区，文件放在哪里会明确告诉你。
 
 > 本项目基于 [oil-oil/oil-delegate](https://github.com/oil-oil/oil-delegate)（MIT）改造，保留了上游的 9 个 runner 适配、结构化输出、续接、角色和会话导出等能力。相对上游的改动见下文与 [docs/DESIGN.md](docs/DESIGN.md)，来源说明见 [NOTICE.md](NOTICE.md)。
 
@@ -20,7 +20,7 @@
 
 ## 相对上游的主要改动
 
-| 方面 | oil-delegate（上游） | agent-delegate-verify |
+| 方面 | oil-delegate（上游） | agent-ferry |
 | --- | --- | --- |
 | 找 Python | 文档写 `py -3`/`python3`，脚本不探测 | 引导脚本 + `doctor`，识别 conda/uv/pyenv/Scoop/注册表，可固定、可覆盖 |
 | 文件位置 | 全部写进 `~/.oil-delegate`，不告知 | 分为配置/记录/缓存/隔离工作区，跟随宿主布局，首次确认、每次告知，`locations`/`prune` |
@@ -49,13 +49,13 @@
 
 ## 安装
 
-把仓库放进宿主能发现技能的目录，文件夹名保持 `agent-delegate-verify`：
+把仓库放进宿主能发现技能的目录，文件夹名保持 `agent-ferry`：
 
 ```bash
 # Claude Code
-git clone https://github.com/GongXLiang/agent-delegate-verify.git ~/.claude/skills/agent-delegate-verify
+git clone https://github.com/GongXLiang/agent-ferry.git ~/.claude/skills/agent-ferry
 # Codex
-git clone https://github.com/GongXLiang/agent-delegate-verify.git ~/.codex/skills/agent-delegate-verify
+git clone https://github.com/GongXLiang/agent-ferry.git ~/.codex/skills/agent-ferry
 ```
 
 需要至少一个已安装并登录的受支持 CLI，以及任意 Python 3.10+（引导脚本会自己找）。
@@ -83,7 +83,7 @@ git clone https://github.com/GongXLiang/agent-delegate-verify.git ~/.codex/skill
 
 | 位置 | 内容 | 默认（可配置） |
 | --- | --- | --- |
-| home | `config.json`（几 KB） | 平台数据目录下的 `agent-delegate-verify` |
+| home | `config.json`（几 KB） | 平台数据目录下的 `agent-ferry` |
 | records | 每次运行的任务书、最终回复、`result.json`（含审计摘要） | 首次确认时选定 |
 | cache | 运行中的原始输出，运行结束即删除 | 跟随 `CLAUDE_CODE_TMPDIR`，否则平台缓存目录 |
 | workspaces | 非项目任务的隔离空目录 | 跟随 Codex 的 `projectlessWorkspaceRoot`，按 `<日期>/<名称>` 命名 |

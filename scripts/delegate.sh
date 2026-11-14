@@ -1,7 +1,7 @@
 #!/bin/sh
-# agent-delegate-verify bootstrap for POSIX sh (Linux, macOS, Git Bash/MSYS on Windows).
+# agent-ferry bootstrap for POSIX sh (Linux, macOS, Git Bash/MSYS on Windows).
 # Finds Python 3.10+ without needing Python, then runs scripts/delegate.py with every argument.
-# Order: AGENT_DELEGATE_VERIFY_PYTHON (must work) -> python pinned in config.json -> PATH
+# Order: AGENT_FERRY_PYTHON (must work) -> python pinned in config.json -> PATH
 #        (python3, python, py -3) -> conda/mamba, uv, pyenv, asdf, mise -> common folders.
 #        Each candidate is executed once; anything older than 3.10 is rejected.
 # Usage:  sh <skill>/scripts/delegate.sh <subcommand> [options]
@@ -21,7 +21,7 @@ found_version=""
 found_exe=""
 found_source=""
 
-say() { printf '%s\n' "[agent-delegate-verify] $*" >&2; }
+say() { printf '%s\n' "[agent-ferry] $*" >&2; }
 
 to_unix() {  # Windows paths from the environment, when running under Git Bash/MSYS/Cygwin
     case "$1" in
@@ -79,21 +79,21 @@ try_glob() {  # $1 source, then paths (already expanded by the shell)
 
 default_home() {
     case "$(uname -s 2>/dev/null)" in
-        Darwin) printf '%s\n' "$HOME/Library/Application Support/agent-delegate-verify" ;;
-        MINGW*|MSYS*|CYGWIN*) printf '%s\n' "$(to_unix "${LOCALAPPDATA:-$HOME/AppData/Local}")/agent-delegate-verify" ;;
-        *) printf '%s\n' "${XDG_STATE_HOME:-$HOME/.local/state}/agent-delegate-verify" ;;
+        Darwin) printf '%s\n' "$HOME/Library/Application Support/agent-ferry" ;;
+        MINGW*|MSYS*|CYGWIN*) printf '%s\n' "$(to_unix "${LOCALAPPDATA:-$HOME/AppData/Local}")/agent-ferry" ;;
+        *) printf '%s\n' "${XDG_STATE_HOME:-$HOME/.local/state}/agent-ferry" ;;
     esac
 }
 
 find_python() {
-    if [ -n "${AGENT_DELEGATE_VERIFY_PYTHON:-}" ]; then
-        if try_python "$(to_unix "$AGENT_DELEGATE_VERIFY_PYTHON")" "AGENT_DELEGATE_VERIFY_PYTHON"; then return 0; fi
-        say "AGENT_DELEGATE_VERIFY_PYTHON is set but not usable: $AGENT_DELEGATE_VERIFY_PYTHON"
+    if [ -n "${AGENT_FERRY_PYTHON:-}" ]; then
+        if try_python "$(to_unix "$AGENT_FERRY_PYTHON")" "AGENT_FERRY_PYTHON"; then return 0; fi
+        say "AGENT_FERRY_PYTHON is set but not usable: $AGENT_FERRY_PYTHON"
         printf '%s' "$rejected" >&2
         exit 9
     fi
 
-    home_dir=${AGENT_DELEGATE_VERIFY_HOME:-}
+    home_dir=${AGENT_FERRY_HOME:-}
     if [ -n "$home_dir" ]; then home_dir=$(to_unix "$home_dir"); else home_dir=$(default_home); fi
     config_file="$home_dir/config.json"
     if [ -f "$config_file" ]; then
@@ -166,7 +166,7 @@ find_python() {
 if ! find_python; then
     say "No Python 3.10+ found. Rejected candidates:"
     printf '%s' "$rejected" >&2
-    say "Install Python 3.10+ (python.org, conda, uv, pyenv ...) or set AGENT_DELEGATE_VERIFY_PYTHON to its full path."
+    say "Install Python 3.10+ (python.org, conda, uv, pyenv ...) or set AGENT_FERRY_PYTHON to its full path."
     exit 9
 fi
 
@@ -177,8 +177,8 @@ if [ "${1:-}" = "--which" ]; then
     exit 0
 fi
 
-AGENT_DELEGATE_VERIFY_PYTHON_SOURCE=$found_source
-export AGENT_DELEGATE_VERIFY_PYTHON_SOURCE
+AGENT_FERRY_PYTHON_SOURCE=$found_source
+export AGENT_FERRY_PYTHON_SOURCE
 if [ -n "$found_extra" ]; then
     exec "$found" "$found_extra" "$main" "$@"
 fi

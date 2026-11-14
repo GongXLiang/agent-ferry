@@ -5,7 +5,7 @@
 ## 共同约束
 
 - 正式名称：`claude`、`workbuddy`、`antigravity`、`codex`、`opencode`、`dsh`、`grok`、`kimi`、`pi`。别名：`cc/claude-code`、`wb/codebuddy/cbc`、`agy/anti`、`deepseek/deepseek-harness`、`grok-build`、`kimi-code`、`pi-agent/pi-coding-agent`。不区分大小写。
-- 可执行文件查找顺序：环境变量 `AGENT_DELEGATE_VERIFY_<RUNNER>_BIN` → `config --set-bin` → PATH → 已知目录（`~/.local/bin`、`~/.kimi-code/bin`；Windows 另有 `%APPDATA%\npm`；macOS/Linux 另有 `/opt/homebrew/bin`、`/usr/local/bin`）。
+- 可执行文件查找顺序：环境变量 `AGENT_FERRY_<RUNNER>_BIN` → `config --set-bin` → PATH → 已知目录（`~/.local/bin`、`~/.kimi-code/bin`；Windows 另有 `%APPDATA%\npm`；macOS/Linux 另有 `/opt/homebrew/bin`、`/usr/local/bin`）。
 - 所有调用都用参数数组，提示词不经过 shell。默认不指定模型、provider 或思考强度。
 - 权限参数只影响本次进程，不修改目标 CLI 的永久配置。任何级别都不是安全隔离的保证：静态 deny、hooks、管理锁、登录、额度和网络仍可能导致失败。
 
@@ -72,8 +72,8 @@ DSH 在 onboarding 和每次运行前执行 `dsh --profile headless --help` 检�
 | --- | --- | --- |
 | Kimi Code | `~/.kimi-code` | `KIMI_CODE_HOME`（官方） |
 | Codex | `~/.codex` | `CODEX_HOME`（官方） |
-| Antigravity CLI / IDE | `~/.gemini/antigravity-cli`、`~/.gemini/antigravity` | `AGENT_DELEGATE_VERIFY_ANTIGRAVITY_CLI_HOME`、`AGENT_DELEGATE_VERIFY_ANTIGRAVITY_HOME` |
-| Claude 桌面元数据 | macOS `~/Library/Application Support/Claude/claude-code-sessions`；Windows `%APPDATA%\Claude\claude-code-sessions`、Linux `~/.config/Claude/claude-code-sessions`（后两者未验证） | `AGENT_DELEGATE_VERIFY_CLAUDE_DESKTOP_HOME` |
+| Antigravity CLI / IDE | `~/.gemini/antigravity-cli`、`~/.gemini/antigravity` | `AGENT_FERRY_ANTIGRAVITY_CLI_HOME`、`AGENT_FERRY_ANTIGRAVITY_HOME` |
+| Claude 桌面元数据 | macOS `~/Library/Application Support/Claude/claude-code-sessions`；Windows `%APPDATA%\Claude\claude-code-sessions`、Linux `~/.config/Claude/claude-code-sessions`（后两者未验证） | `AGENT_FERRY_CLAUDE_DESKTOP_HOME` |
 | Claude Code 数据 | `~/.claude` | `CLAUDE_CONFIG_DIR`（官方） |
 
 - 数据根目录本身可以是符号链接或 Windows 目录联接（常用于把数据搬到别的盘），会解析一次；根目录内部的链接一律不跟随。云同步目录（iCloud、CloudStorage 等）和 macOS 云占位文件会被拒绝。上游会拒绝符号链接根目录和挂载点下的路径，这里有意放宽并有回归测试。

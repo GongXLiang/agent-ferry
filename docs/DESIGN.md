@@ -1,4 +1,4 @@
-# agent-delegate-verify 设计说明
+# agent-ferry 设计说明
 
 > 本项目基于 [oil-oil/oil-delegate](https://github.com/oil-oil/oil-delegate)（MIT）改造。本文按「需求 → 方案 → 取舍」记录设计，先于实现写成，实现后按实际结果修订。
 
@@ -23,7 +23,7 @@
 **方案**
 
 - **引导脚本**（不依赖 Python）：`scripts/delegate.ps1`（Windows PowerShell 5.1+ / PowerShell 7）、`scripts/delegate.sh`（POSIX sh，也可在 Git Bash 里用）、`scripts/delegate.cmd`（转调 ps1）。按顺序取第一个可用的解释器，然后把全部参数转给 `scripts/delegate.py`：
-  1. 环境变量 `AGENT_DELEGATE_VERIFY_PYTHON`：显式覆盖，不可用就报错退出，不悄悄换成别的（借鉴 orchestration「选定的可执行文件跑不起来就报原样错误并停止」）。
+  1. 环境变量 `AGENT_FERRY_PYTHON`：显式覆盖，不可用就报错退出，不悄悄换成别的（借鉴 orchestration「选定的可执行文件跑不起来就报原样错误并停止」）。
   2. `config.json` 里用 `config --set-python` 固定的路径：不可用时警告并继续探测。
   3. PATH：Windows 依次 `python`、`python3`、`py -3`；POSIX 依次 `python3`、`python`。
   4. 环境与包管理器：`CONDA_PREFIX`（已激活环境）、`CONDA_EXE`/`MAMBA_EXE`/`MAMBA_ROOT_PREFIX` 推出的 base 及其 `envs/*`、`conda info --base`、`uv python find`（设置 `UV_PYTHON_DOWNLOADS=never`，只找不下载）、pyenv / pyenv-win、asdf、mise、Scoop（`SCOOP` 或默认根下的 `python*`、`miniconda3`、`anaconda3`、`miniforge`、`mambaforge`）。
@@ -45,17 +45,17 @@
 
 | 位置 | 类别 | 内容 | 解析顺序（先到先得） |
 | --- | --- | --- | --- |
-| `home` | 配置 | `config.json`（几 KB） | `--home` → `AGENT_DELEGATE_VERIFY_HOME` → 平台默认 |
-| `records` | 长期记录 | 每次 run 的任务书、最终回复、`result.json`（含审计摘要） | `--records-dir` → `AGENT_DELEGATE_VERIFY_RECORDS_DIR` → 配置 → 宿主推断 → `<home>/runs` |
-| `cache` | 临时 | 运行中的原始输出；run 结束即删除本次的在途文件 | `--cache-dir` → `AGENT_DELEGATE_VERIFY_CACHE_DIR` → 配置 → `CLAUDE_CODE_TMPDIR/agent-delegate-verify` → 平台缓存目录 |
-| `workspaces` | 隔离工作区 | 非项目任务的空目录 | `--workspace-root` → `AGENT_DELEGATE_VERIFY_WORKSPACE_ROOT` → 配置 → Codex `[desktop].projectlessWorkspaceRoot` → `<home>/workspaces` |
+| `home` | 配置 | `config.json`（几 KB） | `--home` → `AGENT_FERRY_HOME` → 平台默认 |
+| `records` | 长期记录 | 每次 run 的任务书、最终回复、`result.json`（含审计摘要） | `--records-dir` → `AGENT_FERRY_RECORDS_DIR` → 配置 → 宿主推断 → `<home>/runs` |
+| `cache` | 临时 | 运行中的原始输出；run 结束即删除本次的在途文件 | `--cache-dir` → `AGENT_FERRY_CACHE_DIR` → 配置 → `CLAUDE_CODE_TMPDIR/agent-ferry` → 平台缓存目录 |
+| `workspaces` | 隔离工作区 | 非项目任务的空目录 | `--workspace-root` → `AGENT_FERRY_WORKSPACE_ROOT` → 配置 → Codex `[desktop].projectlessWorkspaceRoot` → `<home>/workspaces` |
 
-- 平台默认：`home` 为 Windows `%LOCALAPPDATA%\agent-delegate-verify`、macOS `~/Library/Application Support/agent-delegate-verify`、Linux `$XDG_STATE_HOME`（缺省 `~/.local/state`）`/agent-delegate-verify`；`cache` 为 Windows `%LOCALAPPDATA%\agent-delegate-verify\cache`、macOS `~/Library/Caches/…`、Linux `$XDG_CACHE_HOME`（缺省 `~/.cache`）`/…`。
+- 平台默认：`home` 为 Windows `%LOCALAPPDATA%\agent-ferry`、macOS `~/Library/Application Support/agent-ferry`、Linux `$XDG_STATE_HOME`（缺省 `~/.local/state`）`/agent-ferry`；`cache` 为 Windows `%LOCALAPPDATA%\agent-ferry\cache`、macOS `~/Library/Caches/…`、Linux `$XDG_CACHE_HOME`（缺省 `~/.cache`）`/…`。
 - `config.json` 固定在 `home`，因为引导脚本要在没有 Python 的情况下读出固定的解释器；它只有几 KB。占空间的记录都可以搬走。
 - **宿主推断**（只在没有显式设置时使用）：
   - 隔离工作区：读取 `$CODEX_HOME/config.toml`（缺省 `~/.codex`）的 `[desktop].projectlessWorkspaceRoot`，沿用 Codex 的 `<根>/<YYYY-MM-DD>/<slug>`、重名加 `-N` 的命名。
   - 缓存：跟随 `CLAUDE_CODE_TMPDIR`。
-  - 记录：取宿主数据根的兄弟目录，例如 `CLAUDE_CODE_TMPDIR=E:\Data\Claude\temp` 推出 `E:\Data\agent-delegate-verify\runs`。锚点依次为 `CLAUDE_CODE_TMPDIR`（取上一级为 Claude 数据根）、Codex 的 `projectlessWorkspaceRoot`（同上）、`CODEX_HOME`、`CLAUDE_CONFIG_DIR`；推出的目录若恰是用户主目录或盘符根，则放弃推断。
+  - 记录：取宿主数据根的兄弟目录，例如 `CLAUDE_CODE_TMPDIR=E:\Data\Claude\temp` 推出 `E:\Data\agent-ferry\runs`。锚点依次为 `CLAUDE_CODE_TMPDIR`（取上一级为 Claude 数据根）、Codex 的 `projectlessWorkspaceRoot`（同上）、`CODEX_HOME`、`CLAUDE_CONFIG_DIR`；推出的目录若恰是用户主目录或盘符根，则放弃推断。
 - **首次确认**：位置未确认前，`run` 不写任何文件，返回 `NEEDS_ONBOARDING`，其中给出「推荐位置（按宿主布局推断）」与「平台默认位置」及理由；宿主 Agent 展示给用户，用户选择后 `onboard --locations recommended|default` 把具体路径写进配置。`run --dry-run` 不受此限，因为它什么都不写。
 - **每次 run 都告知**：输出与 `result.json` 都包含 run 目录、隔离工作区路径、被委托 CLI 自己的会话文件位置（Codex 由 thread id 在 `$CODEX_HOME/sessions` 下定位 rollout 文件；Claude 按 `projects/<编码后的 cwd>/<id>.jsonl` 推出；其他 runner 如实写「未接入」）。SKILL.md 要求最终回复把这些位置告诉用户。
 - **不复制对话**：records 只存任务书、最终回复和精简的 `result.json`（审计摘要、错误末尾、指针）。原始事件流先流式写入 cache，结束后：
@@ -134,7 +134,7 @@
 
 ## 3. 相对上游的改动清单
 
-1. 改名为 agent-delegate-verify；保留上游版权与许可全文。
+1. 改名为 agent-ferry；保留上游版权与许可全文。
 2. 新增引导脚本（ps1/sh/cmd）、`doctor`、解释器固定与环境提示。
 3. 位置分为 home/records/cache/workspaces，可配置、可推断、首次确认、每次告知；新增 `locations`、`prune`、`show`、旧版导入。
 4. 默认权限由「最高权限」改为 `read`；新增 `full` 显式级别；无法保证语义的组合直接拒绝。

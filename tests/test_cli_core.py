@@ -533,7 +533,7 @@ class RunContractTests(CliTestCase):
 
     def test_secret_environment_is_not_copied_into_records(self) -> None:
         self.onboard_all()
-        sentinel = "agent-delegate-verify-test-sentinel"
+        sentinel = "agent-ferry-test-sentinel"
         proc = self.run_task("dsh", extra_env={"DEEPSEEK_API_KEY": sentinel})
         self.assertEqual(proc.returncode, 0, msg=proc.stderr)
         result = self.result_of(proc)

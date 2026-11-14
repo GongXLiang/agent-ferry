@@ -4,18 +4,18 @@
 
 | 位置 | 内容 | 解析顺序（先到先得） |
 | --- | --- | --- |
-| `home` | `config.json` | `--home` → `AGENT_DELEGATE_VERIFY_HOME` → 平台默认 |
-| `records` | 每次运行一个目录：任务书、最终回复、`result.json` | `--records-dir` → `AGENT_DELEGATE_VERIFY_RECORDS_DIR` → `config.json` → 宿主推断 → `<home>/runs` |
-| `cache` | 运行中的原始输出 | `--cache-dir` → `AGENT_DELEGATE_VERIFY_CACHE_DIR` → `config.json` → 宿主推断 → 平台缓存目录 |
-| `workspaces` | 非项目任务的隔离空目录 | `--workspace-root` → `AGENT_DELEGATE_VERIFY_WORKSPACE_ROOT` → `config.json` → 宿主推断 → `<home>/workspaces` |
+| `home` | `config.json` | `--home` → `AGENT_FERRY_HOME` → 平台默认 |
+| `records` | 每次运行一个目录：任务书、最终回复、`result.json` | `--records-dir` → `AGENT_FERRY_RECORDS_DIR` → `config.json` → 宿主推断 → `<home>/runs` |
+| `cache` | 运行中的原始输出 | `--cache-dir` → `AGENT_FERRY_CACHE_DIR` → `config.json` → 宿主推断 → 平台缓存目录 |
+| `workspaces` | 非项目任务的隔离空目录 | `--workspace-root` → `AGENT_FERRY_WORKSPACE_ROOT` → `config.json` → 宿主推断 → `<home>/workspaces` |
 
 平台默认：
 
 | 平台 | home | cache |
 | --- | --- | --- |
-| Windows | `%LOCALAPPDATA%\agent-delegate-verify` | `%LOCALAPPDATA%\agent-delegate-verify\cache` |
-| macOS | `~/Library/Application Support/agent-delegate-verify` | `~/Library/Caches/agent-delegate-verify` |
-| Linux | `$XDG_STATE_HOME/agent-delegate-verify`（缺省 `~/.local/state`） | `$XDG_CACHE_HOME/agent-delegate-verify`（缺省 `~/.cache`） |
+| Windows | `%LOCALAPPDATA%\agent-ferry` | `%LOCALAPPDATA%\agent-ferry\cache` |
+| macOS | `~/Library/Application Support/agent-ferry` | `~/Library/Caches/agent-ferry` |
+| Linux | `$XDG_STATE_HOME/agent-ferry`（缺省 `~/.local/state`） | `$XDG_CACHE_HOME/agent-ferry`（缺省 `~/.cache`） |
 
 `config.json` 固定放在 `home`，因为引导脚本要在没有 Python 的情况下读取固定的解释器；它只有几 KB。占空间的记录都可以搬到别处。
 
@@ -24,8 +24,8 @@
 只在命令行、环境变量和配置都没有指定时使用：
 
 - `workspaces`：读取 `$CODEX_HOME/config.toml`（缺省 `~/.codex`）的 `[desktop].projectlessWorkspaceRoot`，沿用 Codex 的 `<根>/<YYYY-MM-DD>/<名称>` 命名，重名依次加 `-2`、`-3`。
-- `cache`：`CLAUDE_CODE_TMPDIR/agent-delegate-verify`。
-- `records`：宿主数据目录的兄弟目录。锚点依次为 `CLAUDE_CODE_TMPDIR`（取上一级作为 Claude 数据目录）、Codex 的 `projectlessWorkspaceRoot`（同上）、`CODEX_HOME`、`CLAUDE_CONFIG_DIR`。例如 `CLAUDE_CODE_TMPDIR=E:\Data\Claude\temp` 推出 `E:\Data\agent-delegate-verify\runs`。锚点位于用户主目录内（说明没有刻意搬家）时不推断；推出的目录恰为主目录或盘符根时也放弃。
+- `cache`：`CLAUDE_CODE_TMPDIR/agent-ferry`。
+- `records`：宿主数据目录的兄弟目录。锚点依次为 `CLAUDE_CODE_TMPDIR`（取上一级作为 Claude 数据目录）、Codex 的 `projectlessWorkspaceRoot`（同上）、`CODEX_HOME`、`CLAUDE_CONFIG_DIR`。例如 `CLAUDE_CODE_TMPDIR=E:\Data\Claude\temp` 推出 `E:\Data\agent-ferry\runs`。锚点位于用户主目录内（说明没有刻意搬家）时不推断；推出的目录恰为主目录或盘符根时也放弃。
 
 ## 首次确认
 

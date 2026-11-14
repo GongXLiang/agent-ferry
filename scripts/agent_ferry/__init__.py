@@ -1,4 +1,4 @@
-"""agent-delegate-verify internals (standard library only, Python 3.10+).
+"""agent-ferry internals (standard library only, Python 3.10+).
 
 Based on oil-oil/oil-delegate (MIT). Modules:
 

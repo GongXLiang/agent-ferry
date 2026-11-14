@@ -11,8 +11,8 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
-APP_NAME = "agent-delegate-verify"
-ENV_PREFIX = "AGENT_DELEGATE_VERIFY_"
+APP_NAME = "agent-ferry"
+ENV_PREFIX = "AGENT_FERRY_"
 # Bump when result/status JSON fields change incompatibly.
 CONTRACT_VERSION = 1
 SCHEMA_VERSION = 1

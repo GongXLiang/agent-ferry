@@ -66,9 +66,9 @@ class ResolutionTests(CliTestCase):
             os.environ.pop(P + "WORKSPACE_ROOT")
             inferred = self.resolve()
             self.assertEqual(inferred.home.path, self.state_dir)
-            self.assertEqual(inferred.cache.path, outside / "agent-delegate-verify")
+            self.assertEqual(inferred.cache.path, outside / "agent-ferry")
             self.assertEqual(inferred.cache.source, "inferred")
-            self.assertEqual(inferred.records.path, self.root / "D-drive" / "agent-delegate-verify" / "runs")
+            self.assertEqual(inferred.records.path, self.root / "D-drive" / "agent-ferry" / "runs")
             self.assertEqual(inferred.workspaces.source, "default")
             self.assertFalse(inferred.confirmed)
 
@@ -100,7 +100,7 @@ class ResolutionTests(CliTestCase):
             locations = self.resolve()
         self.assertEqual(locations.records.source, "default")
         self.assertEqual(locations.records.path, self.state_dir / "runs")
-        self.assertEqual(locations.cache.path, inside / "agent-delegate-verify")  # temp still follows the host
+        self.assertEqual(locations.cache.path, inside / "agent-ferry")  # temp still follows the host
 
     def test_drive_root_anchor_is_not_used_for_records(self) -> None:
         anchors = [storage.Anchor("codex-home", Path(Path.cwd().anchor) / "codex", "CODEX_HOME")]
@@ -113,7 +113,7 @@ class ResolutionTests(CliTestCase):
             home = storage.platform_home()
             cache = storage.platform_cache()
         if os.name == "nt":
-            self.assertEqual(home, self.home / "AppData" / "Local" / "agent-delegate-verify")
+            self.assertEqual(home, self.home / "AppData" / "Local" / "agent-ferry")
             self.assertEqual(cache, home / "cache")
         else:
             self.assertTrue(str(home).startswith(str(self.home)))
@@ -130,8 +130,8 @@ class ResolutionTests(CliTestCase):
         payload = self.json_of(proc)
         self.assertTrue(payload["locations"]["confirmed"])
         stored = json.loads((self.state_dir / "config.json").read_text(encoding="utf-8"))
-        self.assertEqual(Path(stored["locations"]["cache"]), outside / "agent-delegate-verify")
-        self.assertEqual(Path(stored["locations"]["records"]), self.root / "D-drive" / "agent-delegate-verify" / "runs")
+        self.assertEqual(Path(stored["locations"]["cache"]), outside / "agent-ferry")
+        self.assertEqual(Path(stored["locations"]["records"]), self.root / "D-drive" / "agent-ferry" / "runs")
         self.assertEqual(Path(stored["locations"]["workspaces"]), self.root / "D-drive" / "Codex" / "session")
 
     def test_set_location_and_set_python(self) -> None:
